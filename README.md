@@ -6,3 +6,5 @@ Slides and theme for my talk at [WordCamp Toronto 2014](http://2014.toronto.word
 - **feline-design-co**: a complete WordPress theme
 - **html-site**: the original HTML and CSS template I based my theme on
 - **slides**: my slide deck, with step-by-step guidelines to creating a custom theme
+
+My slide deck is also on [SlideShare](http://www.slideshare.net/LinnAlexandra/dont-fear-the-custom-theme-how-to-build-a-custom-wordpress-theme-with-only-four-files).
