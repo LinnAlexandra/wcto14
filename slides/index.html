@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Don&rsquo;t Fear the Custom Theme</title>
+		<meta name="description" content="How to build a custom WordPress theme with only four files: a WordCamp Toronto 2014 talk">
+		<meta name="author" content="Linn Oyen Farley">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/drollic.css" id="theme">
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Don&rsquo;t Fear the Custom Theme</h1>
+					<h2>How to build a custom WordPress theme with only four files</h2>
+					<p>Linn &Oslash;yen Farley<br />
+					<a href="http://drollic.ca">drollic.ca</a> / <a href="http://twitter.com/LinnOyenFarley">@LinnOyenFarley</a></p>
+				</section>
+				<section>
+					<img src="images/linn.jpg" alt="Linn" class="round" />
+					<h2>Linn &Oslash;yen Farley</h2>
+					<p><strong>Web designer/developer</strong><br />
+					Building things on the internet since 2005<br />
+					Usually working solo or with a designer<br />
+					Mainly use WordPress for client sites</p>
+				</section>
+				<section>
+					<h2>I &hearts; WordPress</h2>
+					<ul>
+						<li>Amazing community and resources</li>
+						<li>Active plugin community (don&rsquo;t have to re-invent the wheel)</li>
+						<li>Super easy to hand off to clients</li>
+					</ul>
+				</section>
+				<section>
+					<h2>But ...</h2>
+					<ul>
+						<li>&ldquo;WordPress outputs bloated code&rdquo;</li>
+						<li>&ldquo;All WordPress sites look the same&rdquo;</li>
+						<li>and/or</li>
+						<li>&ldquo;I don&rsquo;t have time to learn PHP&rdquo;</li>
+						<li>&ldquo;I tried customizing a [commercial theme provider] theme once and I couldn&rsquo;t find anything&rdquo;</li>
+					</ul>
+				</section>
+				<section>
+					<h2>This talk</h2>
+					<ul>
+						<li>is a file-by-file guide to creating a fully-functional WordPress theme, based on an existing HTML/CSS design</li>
+						<li>gives an overview of the bare minimum of PHP functions needed to build a WordPress theme (plus some extra stuff)</li> 
+						<li>suggests how you could use a custom WordPress theme as a tool for rapid prototyping</li>
+						<li>uses WordPress.org&rsquo;s Theme Guidelines (<a href="https://make.wordpress.org/themes/handbook/guidelines/">make.wordpress.org/themes/handbook/guidelines/</a>) as a starting point for best practices</li>
+					</ul>
+				</section>
+				<section>
+					<h2>This talk won&rsquo;t</h2>
+					<ul>
+						<li>cover HTML/CSS/design principles</li>
+						<li>100% accurately represent how I build themes for clients</li>
+						<li>focus on making a WordPress.org-repository-ready theme and/or incorporate every use case into a single theme</li>
+						<li>be a hands-on workshop &mdash; I have less than an hour, so I&rsquo;ll be moving pretty quickly</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Commercial theme</h2>
+					<p class="small"><img src="images/commercial-theme.jpg" alt="Commercial theme file list" /><br />
+					<span class="fragment"><strong>Full disclosure:</strong> I installed this exact theme on a client&rsquo;s site earlier this year. There is definitely a place for commercial and child themes in the WordPress ecosystem, but creating a custom theme may be appropriate more often than you think.</span></p>
+				</section>
+				<section>
+					<h2>Recent theme for a client</h2>
+					<ul class="two-column">
+						<li>404.php</li>
+						<li>comments.php</li>
+						<li>footer.php</li>
+						<li>functions.php</li>
+						<li>header.php</li>
+						<li>images/
+							<ul>
+								<li>logo.png</li>
+								<li>nav-icon.png</li>
+								<li>search.png</li>
+							</ul>
+						</li>
+						<li>index.php</li>
+						<li>js/
+							<ul>
+								<li>html5shim.js</li>
+								<li>respond.min.js</li>
+							</ul>
+						</li>
+						<li>page.php</li>
+						<li>screenshot.png</li>
+						<li>searchform.php</li>
+						<li>style.css</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Theme for WordPress.org</h2>
+					<ul>
+						<li>index.php</li>
+						<li>screenshot.png</li>
+						<li>style.css</li>
+					</ul>
+					<p class="small"><strong>Note:</strong> The <em>recommended</em> theme guidelines (<a href="https://make.wordpress.org/themes/handbook/guidelines/theme-check/#recommended">make.wordpress.org/themes/handbook/guidelines/theme-check/#recommended</a>) include a few more files, but the three above are the only <em>required</em> files (<a href="https://make.wordpress.org/themes/handbook/guidelines/theme-check/#required">make.wordpress.org/themes/handbook/guidelines/theme-check/#required</a>).</p>
+					<p class="fragment">...plus we&rsquo;ll talk about functions.php, because it&rsquo;s my favourite</p>
+				</section>
+				<section>
+					<h2>Wait a minute...</h2>
+					<p><img class="alignright" src="images/commercial-theme-small.jpg" alt="Commercial theme file list" />How can this &rarr;</p>
+					<div class="fragment"><p>be successfully reduced to this:</p>
+					<ul>
+						<li>index.php</li>
+						<li>screenshot.png</li>
+						<li>style.css</li>
+					</ul></div>
+					<p class="fragment">(you might be wondering)</p>
+				</section>
+				<section>
+					<h2>The template hierarchy</h2>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Template_Hierarchy">codex.wordpress.org/Template_Hierarchy</a></p>
+					<p><img src="images/template-hierarchy.jpg" alt="Template hierarchy diagram" /></p>
+				</section>
+				<section>
+					<h2>The template hierarchy</h2>
+					<p><img class="alignright" src="images/template-hierarchy-closeup.jpg" alt="Template hierarchy closeup" />For our purposes, the most important part of that giant diagram is on its right-hand side: all arrows lead to <strong>index.php</strong>.</p>
+					<p>If your theme contains the other files on the diagram, they will trump index.php, but if you <em>only</em> have index.php, that&rsquo;s fine too!</p>
+				</section>
+				<section>
+					<h2>List of requested features</h2>
+					<ul>
+						<li>Responsive design</li>
+						<li>Homepage with intro paragraph and latest post</li>
+						<li>About page with image gallery</li>
+						<li>Blog with widgets in the sidebar</li>
+					</ul>
+				</section>
+				<section>
+					<h2>WordPress dashboard tasks</h2>
+					<ul>
+						<li>Pages &rarr; Add New:
+							<ul>
+								<li>Home (the intro paragraph), About (the image gallery), and Blog (with no content)</li>
+							</ul>
+						</li>
+						<li>Posts &rarr; Add New:
+							<ul>
+								<li>create a few blog posts</li>
+							</ul>
+						</li>
+						<li>Settings &rarr; Reading:
+							<ul>
+								<li>Choose &ldquo;Front page displays: A static page&rdquo;</li>
+								<li>Make Home your &ldquo;Front page&rdquo; and Blog your &ldquo;Posts page&rdquo;</li>
+							</ul>
+						</li>
+						<li>Appearance &rarr; Menus:
+							<ul>
+								<li>Create a main navigation menu with the pages you&rsquo;ve made</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>File #1:</h2>
+					<h1>screenshot.png</h1>
+				</section>
+				<section>
+					<h2>Start with a design</h2>
+					<p><a href="../html-site/index.html">Here</a>&rsquo;s a design ready to go, built in HTML and CSS. The image below covers your first required file, <strong>screenshot.png</strong>.</p>
+					<ul>
+						<li>Recommended size: 880x660px</li>
+						<li>Should be a &ldquo;reasonable facsimile&rdquo; of the theme after it is initially activated with default options</li>
+					</ul>
+					<p class="small"><strong>Reference:</strong> <a href="https://make.wordpress.org/themes/handbook/guidelines/theme-check/#required">make.wordpress.org/themes/handbook/guidelines/theme-check/#required</a></p>
+					<p><img src="images/screenshot.png" alt="Theme screenshot" /></p>
+				</section>
+				<section>
+					<p><img src="images/screenshot.png" alt="Theme screenshot" /></p>
+				</section>
+				<section>
+					<h2>File #2:</h2>
+					<h1>style.css</h1>
+				</section>
+				<section>
+					<h2>Get your stylesheet ready</h2>
+					<p>Make sure your CSS file is called <strong>style.css</strong>, and that it starts with the following comment:</p>
+					<pre><code class="css">/*
+Theme Name: [Client's Name]
+Description: Custom theme for [Client's Name].
+Author: Linn Oyen Farley
+Author URI: http://drollic.ca
+Version: 1.0
+*/</code></pre>
+					<p>The absolute minimum you need to include here is your theme&rsquo;s name, but why not give yourself some credit?</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Theme_Development#Theme_Stylesheet">codex.wordpress.org/Theme_Development#Theme_Stylesheet</a></p>
+				</section>
+				<section>
+					<h2>Include WordPress-specific classes</h2>
+					<p>WordPress auto-generates a few classes, which you can include if you want to style them:</p>
+					<pre><code class="css">/* Image alignment classes */
+.aligncenter {}
+.alignleft {}
+.alignright {}
+
+/* Image caption-related classes */
+.wp-caption {}
+.wp-caption-text {}
+.gallery-caption {}
+
+/* Post and comment classes */
+.sticky {}
+.bypostauthor {}
+
+/* Menu classes */
+.current_page_item, .current_page_parent {}</code></pre>
+				</section>
+				<section>
+					<h2>File #3:</h2>
+					<h1>index.php</h1>
+				</section>
+				<section>
+					<h2>Move from HTML to PHP</h2>
+					<p>Take your index.html file...</p>
+					<pre><code class="php">&lt;!-- HTML goes here --&gt;</code></pre>
+					<p>...and save it as <strong>index.php</strong>.</p>
+					<pre><code class="php">&lt;!-- HTML goes here --&gt;
+
+&lt;?php // and also PHP ?&gt;</code></pre>
+					<p>That&rsquo;s all you need to do to start writing PHP in the file. Most WordPress theme files consist of a lot of HTML and a bit of PHP.</p>
+				</section>
+				<section>
+					<h2>Interlude:</h2>
+					<h1>Intro to PHP</h1>
+				</section>
+				<section>
+					<h2>Things to keep in mind:</h2>
+					<ul>
+						<li>PHP isn&rsquo;t as forgiving as HTML or CSS</li>
+						<li>Mistakes in your code = white screen of death + (sometimes) error messages</li>
+						<li>You only need to know a little PHP syntax to build WordPress themes</li>
+						<li>Use a code editor with syntax checking, or run your code through a validator like <a href="http://phpcodechecker.com">PHPCodeChecker.com</a></li>
+					</ul>
+				</section>
+				<section>
+					<h2>Always:</h2>
+					<ul>
+						<li>enclose PHP with opening (<code>&lt;?php</code>) and closing (<code>?&gt;</code>) tags</li>
+						<li>decide to use <em>either</em> single or double quotes</li>
+						<li>mind your semicolons</li>
+					</ul>
+					<pre><code class="php">&lt;?php ?&gt;
+
+&lt;?php echo "Hello world"; ?&gt;
+
+&lt;?php echo 'Hello world'; ?&gt;
+
+&lt;?php // this is a comment ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://php.net/manual/en/index.php">php.net/manual/en/index.php</a></p>
+				</section>
+				<section>
+					<h2>Conditionals</h2>
+					<ul>
+						<li><code>if ( condition1 ) {</code>
+							<ul>
+								<li>if condition #1 is true, do thing #1</li>
+							</ul>
+						</li>
+						<li><code>} elseif ( condition2 ) {</code>
+							<ul>
+								<li>otherwise, if condition #2 is true, do thing #2</li>
+							</ul>
+						</li>
+						<li><code>} else {</code>
+							<ul>
+								<li>or, if none of those conditions are true, do thing #3</li>
+							</ul>
+						</li>
+						<li><code>}</code>
+							<ul>
+								<li>don&rsquo;t forget the closing curly brace!</li>
+							</ul>
+						</li>
+					</ul>
+					<p class="small"><strong>Reference:</strong> Conditional statements: <a href="http://php.net/manual/en/language.control-structures.php">php.net/manual/en/language.control-structures.php</a><br /></p>
+				</section>
+				<section>
+					<h2>Operators</h2>
+					<ul>
+						<li><code>&&</code> (and)</li>
+						<li><code>||</code> (or)</li>
+						<li><code>==</code> (is equal to)</li>
+						<li><code>!=</code> (is not equal to)</li>
+					</ul>
+					<p class="small"><strong>References:</strong><br />
+					Logical operators: <a href="http://php.net/manual/en/language.operators.logical.php">php.net/manual/en/language.operators.logical.php</a><br />
+					Comparison operators: <a href="http://php.net/manual/en/language.operators.comparison.php">php.net/manual/en/language.operators.comparison.php</a></p>
+				</section>
+				<section>
+					<h2>Loops</h2>
+					<ul>
+						<li><code>while ( condition1 ) { }</code></li>
+					</ul>
+					<p>The <code>while</code> loop starts with a condition, and then specifies what to do as long as that condition is true.</p>
+					<p>For example, the main posts loop in WordPress states that as long as there are posts to show (<code>while</code> you have posts), set up each post (so you can grab its title, content, etc).</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://php.net/manual/en/control-structures.while.php">php.net/manual/en/control-structures.while.php</a></p>
+				</section>
+				<section>
+					<h2>Variables</h2>
+					<ul>
+						<li><code>$</code> indicates a variable, either one that you want to store or one that is already stored</li>
+					</ul>
+					<pre><code class="php">$myNewVariable = 'This variable should contain some text!';</code></pre>
+					<p><code>$myNewVariable</code> now contains that string of text, which you can use later.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://php.net/manual/en/language.variables.basics.php">php.net/manual/en/language.variables.basics.php</a></p>
+				</section>
+				<section>
+					<h2>Variables</h2>
+					<ul>
+						<li><code>echo</code> is used to display/output the contents of an existing variable</li>
+					</ul>
+					<p>This:</p>
+					<pre><code class="php">&lt;p&gt;&lt;?php echo $myNewVariable; ?&gt;&lt;/p&gt;</code></pre>
+					<p>would output your text string on the page:</p>
+					<pre><code class="php">This variable should contain some text!</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://php.net/manual/en/function.echo.php">php.net/manual/en/function.echo.php</a></p>
+				</section>
+				<section>
+					<h2>Conditional tags</h2>
+					<p>WordPress has lots of its own functions that you can use in your theme&rsquo;s conditional statements.</p>
+					<p>I&rsquo;m going to cover these ones:</p>
+					<ul>
+						<li><code>is_front_page()</code>
+							<ul><li>true if you&rsquo;re viewing the front page</li></ul></li>
+						<li><code>is_page()</code>
+							<ul><li>true if you&rsquo;re viewing a single page</li></ul></li>
+						<li><code>is_single()</code>
+							<ul><li>true if you&rsquo;re viewing a single post</li></ul></li>
+					</ul>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Conditional_Tags">codex.wordpress.org/Conditional_Tags</a></p>
+				</section>
+				<section>
+					<h2>Back to file #3:</h2>
+					<h1>index.php</h1>
+				</section>
+				<section>
+					<h2>wp_title()</h2>
+					<p>Replace the contents of <code>&lt;title&gt;&lt;/title&gt;</code> with <code>wp_title()</code>.</p>
+					<p>This will output a separator and the title of the page or post being viewed.</p>
+					<p>If you&rsquo;re viewing the front page, it won&rsquo;t output anything.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/wp_title">codex.wordpress.org/Function_Reference/wp_title</a></p>
+				</section>
+				<section>
+					<h2>wp_title() in action</h2>
+					<p>Replacing this:</p>
+					<pre><code class="php">&lt;title&gt;Feline Design Co.&lt;/title&gt;</code></pre>
+					<p>with this:</p>
+					<pre><code class="php">&lt;title&gt;&lt;?php wp_title(); ?&gt;&lt;/title&gt;</code></pre>
+					<p>outputs this (when viewing the blog post with this title):</p>
+					<pre><code class="php">&raquo; Blog post #1</code></pre>
+				</section>
+				<section>
+					<h2>wp_title() &amp; bloginfo('name')</h2>
+					<p>The title function looks best if you also add the site&rsquo;s name (the one you specify under Settings &rarr; General). This:</p>
+					<pre><code class="php">&lt;title&gt;&lt;?php bloginfo( 'name' ); wp_title(); ?&gt;&lt;/title&gt;</code></pre>
+					<p>outputs this (when viewing that same blog post):</p>
+					<pre><code class="php">Feline Design Co. &raquo; Blog post #1</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/bloginfo">codex.wordpress.org/Function_Reference/bloginfo</a></p>
+				</section>
+				<section>
+					<h2>wp_head() &amp; wp_footer()</h2>
+					<p>These required tags always need to be included in your theme. They go immediately before your closing <code>head</code> tag and your closing <code>body</code> tag, respectively:</p>
+					<pre><code class="php">  &lt;?php wp_head(); ?&gt;
+&lt;/head&gt;
+&lt;body&gt;</code></pre>
+					<pre><code class="php">  &lt;?php wp_footer(); ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Function_Reference/wp_head">codex.wordpress.org/Function_Reference/wp_head</a><br />
+					<a href="http://codex.wordpress.org/Function_Reference/wp_footer">codex.wordpress.org/Function_Reference/wp_footer</a></p>
+				</section>
+				<section>
+					<h2>language_attributes() &amp; bloginfo('charset')</h2>
+					<p>You can dynamically specify the site&rsquo;s language and character set using these functions. This:</p>
+					<pre><code class="php">&lt;html &lt;?php language_attributes(); ?&gt;&gt;
+  &lt;head&gt;
+    &lt;meta charset="&lt;?php bloginfo( 'charset' ); ?&gt;" /&gt;</code></pre>
+					<p>outputs something like this:</p>
+					<pre><code class="php">&lt;html lang="en-US"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/language_attributes">codex.wordpress.org/Function_Reference/language_attributes</a></p>
+				</section>
+				<section>
+					<h2>bloginfo('template_directory')</h2>
+					<p>Replace all relative links to design elements (such as your logo in the header area) with links to those elements in your theme folder.</p>
+					<p>You can use the same <code>bloginfo()</code> function you used earlier to get your theme&rsquo;s location.</p>
+					<p>Instead of asking for <code>bloginfo('name')</code> or <code>bloginfo('charset')</code>, ask for <code>bloginfo('template_directory')</code>.</p>
+				</section>
+				<section>
+					<h2>bloginfo('template_directory') in action</h2>
+					<p>Replacing this:</p>
+					<pre><code class="php">&lt;img src="images/logo.png" alt="Feline Design Co." /&gt;</code></pre>
+					<p>with this:</p>
+					<pre><code class="php">&lt;img src="&lt;?php bloginfo('template_directory'); ?&gt;/images/logo.png" alt="&lt;?php bloginfo('name'); ?&gt;" /&gt;</code></pre>
+					<p>outputs this:</p>
+					<pre><code class="php">&lt;img src="http://felinedesign.co/wp-content/themes/feline-design-co/images/logo.png" alt="Feline Design Co." /&gt;</code></pre>
+				</section>
+				<section>
+					<h2>wp_nav_menu()</h2>
+					<p>Replace your static navigation menu with the WordPress native menu (the one you can create under Appearance &rarr; Menus).</p>
+					<p>Make a note of whatever you put as the theme location here, because you&rsquo;ll need it later!</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/wp_nav_menu">codex.wordpress.org/Function_Reference/wp_nav_menu</a></p>
+				</section>
+				<section>
+					<h2>wp_nav_menu() in action</h2>
+					<p>Replacing this:</p>
+					<pre><code class="php">&lt;ul&gt;
+  &lt;li&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="blog.html"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+					<p>with this:</p>
+					<pre><code class="php">&lt;?php wp_nav_menu('theme_location' =&gt; 'main-nav'); ?&gt;</code></pre>
+					<p class="small">Make a note of &ldquo;main-nav&rdquo; for later!</p>
+				</section>
+				<section>
+					<h2>wp_nav_menu() in action</h2>
+					<p>...outputs something like this:</p>
+					<pre class="nowrap"><code>&lt;div class="menu"&gt;
+  &lt;ul&gt;
+    &lt;li class="page_item page-item-474"&gt;&lt;a href="http://felinedesign.co/about/"&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li class="page_item page-item-472"&gt;&lt;a href="http://felinedesign.co/blog/"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+    &lt;li class="page_item page-item-470 current_page_item"&gt;&lt;a href="http://felinedesign.co/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+					<p>Until you assign a menu to the &ldquo;main-nav&rdquo; theme location, <code>wp_nav_menu()</code> will default to an alphabetical list of your pages.</p>
+				</section>
+				<section>
+					<h2>The WordPress loop</h2>
+					<p>Replace your hard-coded content with dynamic content. Start by checking if any content exists, and display an error message if it doesn&rsquo;t:</p>
+					<pre><code class="php">&lt;?php if ( ! have_posts() ) { ?&gt;
+  &lt;h1&gt;Not Found&lt;/h1&gt;
+  &lt;p&gt;Sorry, nothing found.&lt;/p&gt;
+&lt;?php } ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>Anatomy of an if statement</h2>
+					<p>A basic <code>if</code> statement is structured like this:</p>
+					<ol>
+						<li>the word <code>if</code></li>
+						<li>opening parenthesis</li>
+						<li>condition</li>
+						<li>closing parenthesis</li>
+						<li>opening curly brace</li>
+						<li>things that should happen if the condition is true</li>
+						<li>closing curly brace</li>
+					</ol>
+				</section>
+				<section>
+					<h2>have_posts()</h2>
+					<pre><code class="php">&lt;?php if ( ! have_posts() ) { ?&gt;
+  &lt;h1&gt;Not Found&lt;/h1&gt;
+  &lt;p&gt;Sorry, nothing found.&lt;/p&gt;
+&lt;?php } ?&gt;</code></pre>
+					<p><code>have_posts()</code> is a WordPress function that checks if there is any content to display (either posts or pages).</p>
+					<p>The <code>!</code> means <em>not</em>, i.e. if there is <em>not</em> any content, do the following &mdash; in this case, display a &ldquo;Not Found&rdquo; heading and message.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/have_posts">codex.wordpress.org/Function_Reference/have_posts</a></p>
+				</section>
+				<section>
+					<h2>The WordPress loop</h2>
+					<p>If there is stuff to show, however, it should display:</p>
+					<pre><code class="php">&lt;?php if ( ! have_posts() ) { ?&gt;
+  &lt;h1&gt;Not Found&lt;/h1&gt;
+  &lt;p&gt;Sorry, nothing found.&lt;/p&gt;
+&lt;?php } else {
+  // Display the content!
+} // end if ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>Anatomy of an if/else statement</h2>
+					<p>When you want different stuff to happen when your condition <em>is</em> true vs. when it is <em>not</em> true, the <code>if</code> statement needs a few extra parts after the closing curly brace:</p>
+					<ol>
+						<li>the word <code>else</code></li>
+						<li>opening curly brace</li>
+						<li>things that should happen if the condition is <em>not</em> true</li>
+						<li>closing curly brace</li>
+					</ol>
+				</section>
+				<section>
+					<h2>The WordPress loop</h2>
+					<pre><code class="php">while ( have_posts() ) {
+  the_post(); ?>
+  &lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;
+  &lt;?php the_content();
+} // end while</code></pre>
+					<p>If you do have content, start a <code>while</code> loop to display it.</p>
+					<p>This states that <em>as long as</em> there is content to show, set up <code>the_post()</code>. <code>the_post()</code> function contains all of the info about a post or page in WordPress, so it&rsquo;s ready for you to grab and use.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/the_post">codex.wordpress.org/Function_Reference/the_post</a></p>
+					
+				</section>
+				<section>
+					<h2>the_title() &amp; the_content()</h2>
+					<pre><code class="php">&lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;</code></pre>
+					<p><code>the_title()</code> will pull whatever you&rsquo;ve put in the post or page title field. WordPress doesn&rsquo;t automatically format your title, so you need to wrap the PHP tag in some HTML to style it.</p>
+					<pre><code class="php">&lt;?php the_content(); ?&gt;</code></pre>
+					<p><code>the_content()</code> pulls everything from the main content editing box in WordPress, formatting and all.</p>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Function_Reference/the_title">codex.wordpress.org/Function_Reference/the_title</a><br />
+					<a href="http://codex.wordpress.org/Function_Reference/the_content">codex.wordpress.org/Function_Reference/the_content</a></p>
+				</section>
+				<section>
+					<h2>Recap: the full loop</h2>
+					<p>Here is the loop in its entirety, with comments throughout:</p>
+					<pre><code class="php">&lt;?php
+// If we do not have content...
+if ( ! have_posts() ) {
+  // ...then show an error message: ?&gt;
+  &lt;h1&gt;Not Found&lt;/h1&gt;
+  &lt;p&gt;Sorry, nothing found.&lt;/p&gt;
+&lt;?php
+// Otherwise...
+} else {
+  // ...as long as there is content to show...
+  while ( have_posts() ) {
+    // ...set up each piece of content so we can grab stuff from it:
+    the_post(); ?&gt;
+    &lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;
+    &lt;?php the_content();
+  } // end while
+} // end if ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p>At this point, regular pages look almost perfect:<br />
+					<img src="images/about.jpg" alt="About page" /></p>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p><img class="alignright" src="images/menu01.jpg" alt="Main menu" />
+					You still need to set up a menu location to get those menu items in the right order, but I&rsquo;ll cover that when we get to functions.php.</p>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p>Our error page is also functioning well:<br />
+					<img src="images/404.jpg" alt="404 page" /></p>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p>The blog page needs some additional info on each post, beyond just the title and content. It also needs a widgetized sidebar:<br />
+					<img src="images/blog01.jpg" alt="Blog page" /></p>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p>Our single blog posts need additional info and a sidebar too, plus a section for comments:<br />
+					<img src="images/post01.jpg" alt="Single blog post" /></p>
+				</section>
+				<section>
+					<h2>Theme test drive</h2>
+					<p>Finally, the homepage shouldn&rsquo;t display <code>the_title()</code>, and it&rsquo;s missing the latest post at the bottom:<br />
+					<img src="images/home01.jpg" alt="Homepage" /></p>
+				</section>
+				<section>
+					<h2>is_front_page()</h2>
+					<p>Once you&rsquo;ve established that you do have content to show, start by checking whether you&rsquo;re viewing the front page.</p>
+					<p>If you are, display the content <em>without</em> the title:</p>
+					<pre><code class="php">&lt;?php if ( is_front_page() ) {
+  the_content();
+} // end if ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/is_front_page">codex.wordpress.org/Function_Reference/is_front_page</a></p>
+				</section>
+				<section>
+					<h2>WP_Query()</h2>
+					<p>To grab the latest post and display it on the front page, you can use the function <code>WP_Query()</code>. First, store the result (if there is one) in a variable:</p>
+					<pre><code class="php">&lt;?php $latestPost = new WP_Query('posts_per_page=1'); ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Class_Reference/WP_Query">codex.wordpress.org/Class_Reference/WP_Query</a></p>
+				</section>
+				<section>
+					<h2>WP_Query()</h2>
+					<p>Then you can use the same <code>have_posts()</code> function you&rsquo;ve already seen, but apply it specifically to your <code>$latestPost</code> variable. This double-checks that there is a post to show, before adding a &ldquo;Latest from the blog&rdquo; heading and setting up <code>the_post()</code>:</p>
+					<pre><code class="php">&lt;?php if ( $latestPost-&gt;have_posts() ) {
+  // If there is a post to show, add a title before starting the loop: ?&gt;
+  &lt;h2&gt;Latest from the blog...&lt;/h2&gt;
+  &lt;?php while ( $latestPost-&gt;have_posts() ) {
+    $latestPost-&gt;the_post();
+  } // end while
+} // end if ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>the_excerpt()</h2>
+					<p>If there is a post to show, you can use <code>the_title()</code> again to display its title.</p>
+					<p>Instead of displaying the full content of the post, only display its excerpt by using the function <code>the_excerpt()</code>:</p>
+					<pre><code class="php">&lt;h3&gt;&lt;?php the_title(); ?&gt;&lt;/h3&gt;
+&lt;?php the_excerpt(); ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/the_excerpt">codex.wordpress.org/Function_Reference/the_excerpt</a></p>
+				</section>
+				<section>
+					<h2>the_permalink()</h2>
+					<p><code>the_permalink()</code> will get the post&rsquo;s URL/permalink, so you can make the post title link to the full post:</p>
+					<pre><code class="php">&lt;h3&gt;&lt;a href="&lt;?php the_permalink(); ?&gt;"&gt;&lt;?php the_title(); ?&gt;&lt;/a&gt;&lt;/h3&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/the_permalink">codex.wordpress.org/Function_Reference/the_permalink</a></p>
+				</section>
+				<section>
+					<h2>the_time()</h2>
+					<p>Add the date and time the post was published, using <code>the_time()</code> and the <a href="http://codex.wordpress.org/Formatting_Date_and_Time">Codex&rsquo;s date and time formatting cheatsheet</a>. This:</p>
+					<pre><code class="php">&lt;p class="metadata"&gt;Posted on &lt;?php the_time('F jS Y'); ?&gt; at &lt;?php the_time('g:i A'); ?&gt;&lt;/p&gt;</code></pre>
+					<p>outputs this:</p>
+					<pre><code class="php">&lt;p class="metadata"&gt;Posted on November 15th 2014 at 8:00 AM&lt;/p&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Template_Tags/the_time">codex.wordpress.org/Template_Tags/the_time</a></p>
+				</section>
+				<section>
+					<h2>the_terms()</h2>
+					<p>Add the post&rsquo;s categories by using <code>the_terms()</code>. This:</p>
+					<pre><code class="php">in &lt;?php the_terms( $post-&gt;ID, 'category' ); ?&gt;</code></pre>
+					<p>outputs this:</p>
+					<pre><code class="php">in &lt;a href="http://felinedesign.co/category/cats/" rel="tag"&gt;Cats&lt;/a&gt;, &lt;a href="http://felinedesign.co/category/design/" rel="tag"&gt;Design&lt;/a&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/the_terms">codex.wordpress.org/Function_Reference/the_terms</a></p>
+				</section>
+				<section>
+					<h2>Recap: latest post</h2>
+					<p>Here&rsquo;s the complete block of code to display the post&rsquo;s permalink, title, metadata, and excerpt:</p>
+					<pre><code class="php">&lt;h3&gt;&lt;a href="&lt;?php the_permalink(); ?&gt;"&gt;&lt;?php the_title(); ?&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p class="metadata"&gt;Posted on &lt;?php the_time('F jS Y'); ?&gt; at &lt;?php the_time('g:i A'); ?&gt; in &lt;?php the_terms( $post-&gt;ID, 'category' ); ?&gt;&lt;/p&gt;
+&lt;?php the_excerpt(); ?&gt;</code></pre>
+					<p>And this is how it looks:<br />
+					<img src="images/home02.jpg" alt="Latest post on homepage" /></p>
+				</section>
+				<section>
+					<h2>Homepage: complete!</h2>
+					<p><img src="images/home03.jpg" alt="Homepage" /></p>
+				</section>
+				<section>
+					<h2>is_page()</h2>
+					<p>You can use the same code to display each post&rsquo;s metadata on the main blog page and on single posts.</p>
+					<p>But first, to avoid displaying it on pages, add another condition to the loop:</p>
+					<pre><code class="php">&lt;?php } elseif ( is_page() ) {
+    // If this is a regular page, just display the title and content: ?&gt;
+    &lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;
+    &lt;?php the_content();
+} else {
+    // Otherwise, display the title and content plus the metadata ?&gt;
+    &lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;
+    &lt;p class="metadata"&gt;Posted on &lt;?php the_time('F jS Y'); ?&gt; at &lt;?php the_time('g:i A'); ?&gt; in &lt;?php the_terms( $post-&gt;ID, 'category' ); ?&gt;&lt;/p&gt;
+    &lt;?php the_content();
+} // end if ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/is_page">codex.wordpress.org/Function_Reference/is_page</a></p>
+				</section>
+				<section>
+					<h2>comments_template()</h2>
+					<p>To avoid having comments display on pages, add the comments template at the end of the loop, <em>after</em> you&rsquo;ve established that you&rsquo;re not viewing a page:</p>
+					<pre><code class="php">&lt;p class="metadata"&gt;Posted on &lt;?php the_time('F jS Y'); ?&gt; at &lt;?php the_time('g:i A'); ?&gt; in &lt;?php the_terms( $post-&gt;ID, 'category' ); ?&gt;&lt;/p&gt;
+&lt;?php the_content();
+comments_template(); ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/comments_template">codex.wordpress.org/Function_Reference/comments_template</a></p>
+				</section>
+				<section>
+					<h2>comments_template() in action</h2>
+					<p><img src="images/comments.jpg" alt="Comment form" /></p>
+				</section>
+				<section>
+					<h2>next_posts_link() &amp; previous_posts_link()</h2>
+					<p>Once you have more posts than &ldquo;Blog pages show at most&rdquo; (under Settings &rarr; Reading), you&rsquo;ll need pagination links to navigate the blog.</p>
+					<p>Add the following code between <code>the_content()</code> and <code>comments_template():</code></p>
+					<pre><code class="php">&lt;p class="aligncenter"&gt;
+    &lt;?php next_posts_link( '&amp;larr; Older' ); ?&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;
+    &lt;?php previous_posts_link( 'Newer &amp;rarr;' ); ?&gt;
+&lt;/p&gt;</code></pre>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Function_Reference/next_posts_link">codex.wordpress.org/Function_Reference/next_posts_link</a><br />
+					<a href="http://codex.wordpress.org/Function_Reference/previous_posts_link">codex.wordpress.org/Function_Reference/previous_posts_link</a></p>
+				</section>
+				<section>
+					<h2>next_posts_link() &amp; previous_posts_link() in action</h2>
+					<p>Depending on where you are in the blog, these links may look like any of the following examples:</p>
+					<p><img class="alignleft" src="images/pagination01.jpg" alt="Older posts link" />
+					<img class="alignleft" src="images/pagination02.jpg" alt="Older and Newer posts links" />
+					<img class="alignleft" src="images/pagination03.jpg" alt="Newer posts link" /></p>
+				</section>
+				<section>
+					<h2>Saving space for widgets</h2>
+					<p>You&rsquo;ll be creating a widgetized area in functions.php, so save some space for it now.</p>
+					<p>Before you start the loop, make sure you&rsquo;re not on a page, and then start the primary <code>section</code>:</p>
+					<pre><code class="php">&lt;section class="main"&gt;
+    &lt;?php if ( ! is_page() ) { ?>
+        &lt;section class="primary"&gt;
+    &lt;?php } ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>Saving space for widgets</h2>
+					<p>Then just before closing the main <code>section</code>, check to make sure you&rsquo;re not on a page again, and add an <code>aside</code>:</p>
+					<pre><code class="php">&lt;?php if ( ! is_page() ) { ?&gt;
+    &lt;/section&gt;&lt;!-- .primary --&gt;
+    &lt;aside class="secondary"&gt;
+        &lt;?php dynamic_sidebar( 'blog-widget-area' ); ?&gt;
+    &lt;/aside&gt;&lt;!-- .secondary --&gt;
+    &lt;hr class="clear" /&gt;
+&lt;?php } ?&gt;</code></pre>
+					<p class="small">Make a note of &ldquo;blog-widget-area&rdquo; for later!</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/dynamic_sidebar">codex.wordpress.org/Function_Reference/dynamic_sidebar</a></p>
+				</section>
+				<section>
+					<h2>Saving space for widgets</h2>
+					<p>For now, this will give you an empty sidebar area on the blog and on single posts:<br />
+					<img src="images/sidebar01.jpg" alt="Sidebar area" /></p>
+				</section>
+				<section>
+					<h2>is_single()</h2>
+					<p>Post titles should appear slightly differently on single posts vs. on the main blog page.</p>
+					<p>Inside the final <code>else</code> statement, add one more conditional statement to take care of this:</p>
+					<pre><code class="php">if ( is_single() ) {
+    // If you're viewing a single post, display the title as an h1: ?&gt;
+    &lt;h1&gt;&lt;?php the_title(); ?&gt;&lt;/h1&gt;
+&lt;?php } else {
+    // Otherwise, display the title as an h3 and link it to the full post: ?&gt;
+    &lt;h2&gt;&lt;a href="&lt;?php the_permalink(); ?&gt;"&gt;&lt;?php the_title(); ?&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;?php } ?&gt;
+&lt;p class="metadata"&gt;Posted on &lt;?php the_time('F jS Y'); ?&gt; at &lt;?php the_time('g:i A'); ?&gt; in &lt;?php the_terms( $post-&gt;ID, 'category' ); ?&gt;&lt;/p&gt;
+&lt;?php the_content(); ?&gt;</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/is_single">codex.wordpress.org/Function_Reference/is_single</a></p>
+				</section>
+				<section>
+					<h2>File #4:</h2>
+					<h1>functions.php</h1>
+				</section>
+				<section>
+					<h2>Not required, but super useful</h2>
+					<p>This file is a plugin bundled with your theme. It can add lots of functionality to your site, but keep in mind that it will all disappear if you switch your theme.</p>
+					<p>There are so many things you can do with a functions.php file, and I have very little time, so I&rsquo;m just going to cover a few examples of what&rsquo;s possible.</p>
+				</section>
+				<section>
+					<h2>Create your functions file</h2>
+					<p>Make a new file called functions.php, and add opening and closing PHP tags:</p>
+					<pre><code class="php">&lt;?php
+?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>register_nav_menus()</h2>
+					<p>Remember making a note of &ldquo;main-nav&rdquo;, when you were replacing your hard-coded menu with <code>wp_nav_menu()</code>?</p>
+					<p>It&rsquo;s time to create that menu location, so you can assign your menu to it under Appearance &rarr; Menus:</p>
+					<pre><code class="php">// Register menu(s)
+register_nav_menus(
+    array(
+        'main-nav' =&gt; 'Main Navigation'
+    )
+);</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/register_nav_menus">codex.wordpress.org/Function_Reference/register_nav_menus</a></p>
+				</section>
+				<section>
+					<h2>register_nav_menus()</h2>
+					<p>If your theme is going to use more than one menu, you can register them all in one go:</p>
+					<pre><code class="php">// Register menu(s)
+register_nav_menus(
+    array(
+        'main-nav'   =&gt; 'Main Navigation',
+        'footer-nav' =&gt; 'Footer Navigation'
+    )
+);</code></pre>
+					<p>To display the menu assigned to Footer Navigation (under Appearance &rarr; Menus), add the code below to index.php:</p>
+					<pre><code class="php">&lt;?php wp_nav_menu('theme_location' =&gt; 'footer-nav'); ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>register_nav_menus() in action</h2>
+					<p><img class="alignright" src="images/menu02.jpg" alt="Custom menu" />Ahhhh. Much better.</p>
+					<p class="small">(Note: you need to go to Appearance &rarr; Menus in the WordPress dashboard, create a menu, and select Main Navigation as its Theme location for this to work.)</p>
+				</section>
+				<section>
+					<h2>register_sidebar()</h2>
+					<p>Although the word &ldquo;sidebar&rdquo; is right there, this is how you create any widgetized area, i.e. areas that you can drag widgets into under Appearance &rarr; Widgets.</p>
+					<p class="small"><strong>References:</strong><br /><a href="http://codex.wordpress.org/Function_Reference/register_sidebar">codex.wordpress.org/Function_Reference/register_sidebar</a><br />
+					<a href="http://generatewp.com/sidebar/">GenerateWP&rsquo;s Sidebar Generator (writes the code for you)</a></p>
+					<pre><code class="php">// Register widgetized area(s)
+function my_widgets_init() {
+    register_sidebar(
+        array(
+            'id'            =&gt; 'blog-widget-area',
+            'name'          =&gt; 'Blog Widget Area',
+            'description'   =&gt; 'Appears on the blog and single posts.',
+            'before_title'  =&gt; '&lt;h3 class="widget-title"&gt;',
+            'after_title'   =&gt; '&lt;/h3&gt;',
+            'before_widget' =&gt; '&lt;section class="blog-widget"&gt;',
+            'after_widget'  =&gt; '&lt;/section&gt;&lt;!-- .blog-widget --&gt;',
+        )
+    );
+}
+add_action( 'widgets_init', 'my_widgets_init' );</code></pre>
+				</section>
+				<section>
+					<h2>register_sidebar()</h2>
+					<p>Remember &ldquo;blog-widget-area&rdquo;? Whatever you put as the ID in functions.php:</p>
+					<pre><code class="php">'id' =&gt; 'blog-widget-area'</code></pre>
+					<p>needs to match what you put in <code>dynamic_sidebar()</code> in index.php:</p>
+					<pre><code class="php">&lt;?php dynamic_sidebar( 'blog-widget-area' ); ?&gt;</code></pre>
+				</section>
+				<section>
+					<h2>register_sidebar()</h2>
+					<p>You can register several widget areas in one go with this function, and then display each one using <code>dynamic_sidebar('the-id-you-chose')</code>:</p>
+					<pre><code class="php">// Register widgetized area(s)
+function my_widgets_init() {
+    register_sidebar(
+        array(
+            'id'            =&gt; 'blog-widget-area',
+            'name'          =&gt; 'Blog Widget Area',
+            'description'   =&gt; 'Appears on the blog and single posts.',
+            'before_title'  =&gt; '&lt;h3 class="widget-title"&gt;',
+            'after_title'   =&gt; '&lt;/h3&gt;',
+            'before_widget' =&gt; '&lt;section class="blog-widget"&gt;',
+            'after_widget'  =&gt; '&lt;/section&gt;&lt;!-- .blog-widget --&gt;',
+        )
+    );
+    register_sidebar(
+        array(
+            'id'            =&gt; 'footer-widget-area',
+            'name'          =&gt; 'Footer Widget Area',
+            'description'   =&gt; 'Appears in the footer.',
+            'before_title'  =&gt; '&lt;h5 class="widget-title"&gt;',
+            'after_title'   =&gt; '&lt;/h5&gt;',
+            'before_widget' =&gt; '&lt;section class="footer-widget"&gt;',
+            'after_widget'  =&gt; '&lt;/section&gt;&lt;!-- .footer-widget --&gt;',
+        )
+    );
+}
+add_action( 'widgets_init', 'my_widgets_init' );</code></pre>
+				</section>
+				<section>
+					<h2>register_sidebar() in action</h2>
+					<p><img class="alignright" src="images/sidebar02.jpg" alt="Sidebar area" />We have a sidebar!</p>
+					<p class="small">(Note: you need to go to Appearance &rarr; Widgets in the WordPress dashboard, and drag widgets into the area called Blog Widget Area for this to work.)</p>
+				</section>
+				<section>
+					<h2>wp_enqueue_scripts</h2>
+					<p>Instead of including stylesheets in the <code>&lt;head&gt;</code> of your site:</p>
+					<pre><code class="php">&lt;link rel="stylesheet" href="style.css" type="text/css"/&gt;
+&lt;link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'&gt;</code></pre>
+					<p>register and then enqueue them in functions.php:</p>
+					<pre><code class="php">// Register and enqueue styles and scripts
+function my_scripts_and_styles() {
+    wp_register_style( 'core', get_stylesheet_uri(), false, '1.0', 'all' );
+    wp_register_style( 'fonts', 'http://fonts.googleapis.com/css?family=Montserrat', false, '1.0', 'all' );
+    wp_enqueue_style( 'core' );
+    wp_enqueue_style( 'fonts' );
+}
+add_action( 'wp_enqueue_scripts', 'my_scripts_and_styles' );</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Plugin_API/Action_Reference/wp_enqueue_scripts">codex.wordpress.org/Plugin_API/Action_Reference/wp_enqueue_scripts</a></p>
+				</section>
+				<section>
+					<h2>wp_register_style()</h2>
+					<p>This registers the theme&rsquo;s default stylesheet:</p>
+					<pre><code class="php">wp_register_style( 'core', get_stylesheet_uri(), false, '1.0', 'all' );</code></pre>
+					<p><code>get_stylesheet_uri</code> will grab the URL of style.css. This stylesheet has no dependencies on other CSS files to function, it&rsquo;s at version 1.0, and it should be loaded on all media (as opposed to just &ldquo;screen&rdquo; or &ldquo;print&rdquo;).</p>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Function_Reference/wp_register_style">codex.wordpress.org/Function_Reference/wp_register_style</a><br />
+					<a href="http://generatewp.com/register_style/">GenerateWP&rsquo;s Style Registration Generator (writes the code for you)</a></p>
+				</section>
+				<section>
+					<h2>wp_register_style()</h2>
+					<p>This line registers a Google Fonts stylesheet:</p>
+					<pre><code class="php">wp_register_style( 'fonts', 'http://fonts.googleapis.com/css?family=Montserrat', false, '1.0', 'all' );</code></pre>
+					<p>It&rsquo;s located off-site, so you need to give the full URL. It also has no dependencies, is at version 1.0, and should be loaded on all media.</p>
+				</section>
+				<section>
+					<h2>wp_enqueue_scripts (for JS)</h2>
+					<p>The same function can be used to register and enqueue scripts, if your theme has any.</p>
+					<p>To register and then enqueue a file called global.js in your theme, for example, you would add this below your <code>wp_enqueue_style()</code> lines:</p>
+					<pre><code class="php">wp_register_script( 'global', get_template_directory_uri() . '/js/global.js', array('jquery'), '1.0', true );
+wp_enqueue_script('global');</code></pre>
+				</section>
+				<section>
+					<h2>wp_register_script()</h2>
+					<pre><code class="php">wp_register_script( 'global', get_template_directory_uri() . '/js/global.js', array('jquery'), '1.0', true );</code></pre>
+					<p>The first line registers a file called global.js, which is in a folder called &ldquo;js&rdquo; in the theme folder. It depends on jQuery to function (so it should load after jQuery does), it&rsquo;s at version 1.0, and it should appear just before the closing <code>&lt;/body&gt;</code> tag instead of in the <code>&lt;head&gt;</code>.</p>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Function_Reference/wp_register_script">codex.wordpress.org/Function_Reference/wp_register_script</a><br />
+					<a href="http://generatewp.com/register_script/">GenerateWP&rsquo;s Script Registration Generator (writes the code for you)</a></p>
+				</section>
+				<section>
+					<h2>Conditionally enqueuing</h2>
+					<p>WordPress comes with lots of .js files ready to go (they&rsquo;ve already been registered), but until you enqueue them they won&rsquo;t be loaded in your theme files.</p>
+					<p>comment-reply.js is one of these pre-registered scripts. It enhances threaded comments on single posts, but you only want it to load when it&rsquo;s useful. To limit when this file is included, add this conditional statement to the end of your <code>my_scripts_and_styles()</code> function:</p>
+					<pre><code class="php">if ( is_singular() && get_option( 'thread_comments' ) && comments_open() ) {
+    wp_enqueue_script( 'comment-reply' );
+}</code></pre>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/wp_enqueue_script#Default_Scripts_Included_and_Registered_by_WordPress">http://codex.wordpress.org/Function_Reference/wp_enqueue_script#Default_Scripts_Included_and_Registered_by_WordPress</a></p>
+				</section>
+				<section>
+					<h2>wp_enqueue_scripts in full</h2>
+					<p>Here is the full block of code for your functions.php file:</p>
+					<pre><code class="php">// Register and enqueue styles and scripts
+function my_scripts_and_styles() {
+    wp_register_style( 'core', get_stylesheet_uri(), false, '1.0', 'all' );
+    wp_register_style( 'fonts', 'http://fonts.googleapis.com/css?family=Montserrat', false, '1.0', 'all' );
+    wp_enqueue_style( 'core' );
+    wp_enqueue_style( 'fonts' );
+    
+    // Only include the two lines below if you actually have global.js:
+    wp_register_script( 'global', get_template_directory_uri() . '/js/global.js', array('jquery'), '1.0', true );
+    wp_enqueue_script('global');
+    
+    if ( is_singular() && get_option( 'thread_comments' ) && comments_open() ) {
+        wp_enqueue_script( 'comment-reply' );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'my_scripts_and_styles' );</code></pre>
+				</section>
+				<section>
+					<h2>excerpt_more</h2>
+					<p>By default, WordPress adds [...] to the end of <code>the_excerpt()</code>. To replace this with an ellipsis character and a &ldquo;Continue reading&rdquo; link to the full post, include this code in functions.php:</p>
+					<pre><code class="php">// Append ellipsis and continue reading link to automatic excerpts
+function my_excerpt_more( $more ) {
+    return ' &amp;hellip; &lt;a href="'. get_permalink() .'"&gt;Continue reading &amp;rarr;&lt;/a&gt;';
+}
+add_filter('excerpt_more', 'my_excerpt_more');</code></pre>
+				</section>
+				<section>
+					<h2>excerpt_more() in action</h2>
+					<p>This:<br />
+					<img src="images/excerpt01.jpg" alt="Default excerpt" /></p>
+					<p>now looks like this:<br />
+					<img src="images/excerpt02.jpg" alt="Custom excerpt" /></p>
+				</section>
+				<section>
+					<h2>add_image_size()</h2>
+					<p>If you want WordPress to automatically generate more image sizes than the ones available under Settings &rarr; Media, you can do so with this code:</p>
+					<pre><code class="php">// Register custom image sizes
+add_image_size( 'slider', 750, 300, true ); // cropped to exactly 750 pixels wide by 300 pixels tall
+add_image_size( 'narrow', 150, 999, false ); // sized to 150 pixels wide and proportional height (max 999 pixels)</code></pre>
+					<p>If you&rsquo;ve uploaded images to your media library before adding this code, you need to run a plugin like <a href="https://wordpress.org/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a>. All future uploads will create these custom image sizes automatically.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/add_image_size">codex.wordpress.org/Function_Reference/add_image_size</a></p>
+				</section>
+				<section>
+					<h2>image_size_names_choose</h2>
+					<p>This code will make your new image sizes available when inserting a picture into a post or a page:</p>
+					<pre><code class="php">// Add custom sizes to the WordPress Media Library
+function my_custom_sizes( $sizes ) {
+    return array_merge( $sizes, array(
+        'slider' => __( 'Image Slider' ),
+        'narrow' => __( 'Narrow' )
+    ) );
+}
+add_filter( 'image_size_names_choose', 'my_custom_sizes' );</code></pre>
+					<p>Make sure the lowercase name above matches whatever you called your new image sizes in the previous step.</p>
+					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Plugin_API/Filter_Reference/image_size_names_choose">codex.wordpress.org/Plugin_API/Filter_Reference/image_size_names_choose</a></p>
+				</section>
+				<section>
+					<h2>Remove inline [gallery] styles</h2>
+					<p>The default WordPress gallery inserts some inline CSS that you may want to override in your theme. You could use lots of <code>!important</code>s in your stylesheet, but it&rsquo;s super easy to just stop them from loading entirely:</p>
+					<pre><code class="php">// Remove inline WordPress gallery styles
+add_filter( 'use_default_gallery_style', '__return_false' );</code></pre>
+				</section>
+				<section>
+					<h2>add_theme_support( 'post-thumbnails' )</h2>
+					<p>Enable featured images for posts and pages with this:</p>
+					<pre><code class="php">// Add support for featured images
+add_theme_support( 'post-thumbnails' );</code></pre>
+					<p>Then in index.php, check for and display the featured image. This code will get the &ldquo;thumbnail&rdquo; size, and add the class &ldquo;alignright&rdquo;:</p>
+					<pre><code class="php">if ( has_post_thumbnail() ) {
+    the_post_thumbnail( 'thumbnail', array( 'class' =&gt; 'alignright' ) );
+}</code></pre>
+					<p class="small"><strong>References:</strong><br />
+					<a href="http://codex.wordpress.org/Post_Thumbnails">codex.wordpress.org/Post_Thumbnails</a><br />
+					<a href="http://codex.wordpress.org/Function_Reference/the_post_thumbnail">codex.wordpress.org/Function_Reference/the_post_thumbnail</a></p>
+				</section>
+				<section>
+					<h2>List of requested features, revisited</h2>
+					<ul>
+						<li>Responsive design &#10003;<br />
+						<img class="noborder" src="images/requirements01.jpg" alt="Responsive design" /></li>
+					</ul>
+				</section>
+				<section>
+					<h2>List of requested features, revisited</h2>
+					<ul>
+						<li>Responsive design &#10003;</li>
+						<li>Homepage with intro paragraph and latest post &#10003;<br />
+						<img class="noborder" src="images/requirements02.jpg" alt="Homepage" /></li>
+					</ul>
+				</section>
+				<section>
+					<h2>List of requested features, revisited</h2>
+					<ul>
+						<li>Responsive design &#10003;</li>
+						<li>Homepage with intro paragraph and latest post &#10003;</li>
+						<li>About page with image gallery &#10003;<br />
+						<img class="noborder" src="images/requirements03.jpg" alt="About page" /></li>
+					</ul>
+				</section>
+				<section>
+					<h2>List of requested features, revisited</h2>
+					<ul>
+						<li>Responsive design &#10003;</li>
+						<li>Homepage with intro paragraph and latest post &#10003;</li>
+						<li>About page with image gallery &#10003;</li>
+						<li>Blog with widgets in the sidebar &#10003;<br />
+						<img class="noborder" src="images/requirements04.jpg" alt="Blog page" /></li>
+					</ul>
+				</section>
+				<section>
+					<h1>Questions?</h1><br />
+					<h3><a href="http://twitter.com/LinnOyenFarley">@LinnOyenFarley</a><br />
+					<a href="mailto:&#108;&#105;&#110;&#110;&#64;&#100;&#114;&#111;&#108;&#108;&#105;&#99;&#46;ca">&#108;&#105;&#110;&#110;&#64;&#100;&#114;&#111;&#108;&#108;&#105;&#99;&#46;ca</a></h3><br />
+					<p><strong><a href="http://drollic.ca/wcto14">drollic.ca/wcto14</a></strong><br />
+					Slides, HTML &amp; CSS template, and finished theme</p>
+				</section>
+			</div>
+		</div>
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+		<script>
+			Reveal.initialize({
+				history: true,
+				center: false,
+				theme: Reveal.getQueryHash().theme,
+				transition: 'none',
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+		</script>
+	</body>
+</html>

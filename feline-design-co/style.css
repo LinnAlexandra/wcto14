@@ -1,0 +1,219 @@
+/*
+Theme Name: Feline Design Co
+Description: Custom theme for Feline Design Co.
+Author: Linn Oyen Farley
+Author URI: http://drollic.ca
+Version: 1.0
+*/
+
+/* CSS Reset */
+
+html, body, div, span, applet, object, iframe, pre, a, abbr, acronym, address, big, cite, code, del, em, font, img, ins, q, s, small, strike, strong, sub, sup, tt, dl, dt, dd, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { background: transparent; border: 0; margin: 0; padding: 0; }
+
+/* Colour palette:
+	Dark grey (text) - rgb(30,30,30)
+	Dark purple (links) - rgb(87,37,70)
+	Pale purple (active links, borders) - rgb(185,183,195)
+	Medium grey (background) - rgb(68,67,73)
+	Off-white (secondary section) - rgb(250,250,250)
+	Pale blue (nav, footer) - rgb(181,196,205)
+*/
+
+/* Main styles */
+
+body {
+	background: rgb(68,67,73) url(images/bg.png) fixed;
+	color: rgb(30,30,30);
+	font: 17px Georgia, 'Times New Roman', serif;
+	line-height: 1.5em;
+	margin: 0 auto;
+	max-width: 1200px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Montserrat, Helvetica, Arial, sans-serif;
+	font-weight: normal;
+}
+
+h1 {
+	font-size: 2em;
+}
+
+h2 {
+	font-size: 1.75em;
+}
+
+h3 {
+	font-size: 1.5em;
+}
+h4 {
+	font-size: 1.25em;
+	font-style: italic;
+}
+
+blockquote {
+	color: rgb(87,37,70);
+	float: right;
+	font: 2em Montserrat, Helvetica, Arial, sans-serif;
+	font-style: italic;
+	line-height: 1.2em;
+	padding: 0 1em;
+	width: 50%;
+}
+
+a:link, a:visited {
+	color: rgb(87,37,70);
+}
+
+a:hover, a:active, a:focus {
+	color: rgb(185,183,195);
+}
+
+nav a:link, nav a:visited,
+footer a:link, footer a:visited {
+	color: rgb(255,255,255);
+	text-decoration: none;
+}
+
+nav a:hover, nav a:active, nav a:focus,
+footer a:hover, footer a:active, footer a:focus {
+	color: rgb(30,30,30);
+	text-decoration: underline;
+}
+
+.metadata {
+	font-size: 0.85em;
+}
+
+hr.clear {
+	background: none;
+	clear: both;
+	color: transparent;
+	height: 0;
+}
+
+/* Structure */
+
+header {
+	color: rgb(255,255,255);
+	font: 1.5em Montserrat, Helvetica, Arial, sans-serif;
+	padding: 1em 1% 0 1%;
+	text-align: center;
+}
+
+nav {
+	background-color: rgb(181,196,205);
+	font: 1.2em Montserrat, Helvetica, Arial, sans-serif;
+	padding: 0.1em 0;
+}
+
+nav ul {
+	list-style: none;
+	padding: 0;
+	text-align: center;
+}
+
+nav li {
+	display: inline; 
+	margin: 0;
+	padding: 0 1%;
+}
+
+.main {
+	background-color: rgb(255,255,255);
+	background-color: rgba(255,255,255,0.8);
+	padding: 1em 2%;
+}
+
+.primary { 
+	border-right-color: rgb(185,183,195);
+	border-right-style: solid;
+	border-right-width: 5px;
+	float: left; 
+	padding: 1em 2%;
+	width: 60%;
+}
+
+.secondary {
+	float: right;
+	padding: 1em 2%;
+	width: 30%; 
+}
+
+.blog-widget {
+	list-style: none;
+}
+
+footer {
+	background-color: rgb(181,196,205);
+	clear: both;
+	padding: 1em 1%;
+	text-align: center; 
+}
+
+/* Image classes */
+
+.aligncenter {
+	margin: 0 auto 2%;
+	text-align: center;
+}
+
+.alignleft {
+	display: inline;
+	float: left;
+	margin: 0 1% 2% 0;
+}
+
+.alignright {
+	float: right;
+	margin: 0 0 2% 1%;
+}
+
+.main img {
+	border: 3px solid rgb(185,183,195);
+	border-radius: 100%;
+}
+
+.gallery-item {
+	float: left;
+	text-align: center;
+	width: 25%;
+}
+
+.wp-caption, .gallery-caption {
+	max-width: 100%;
+	text-align: center;
+}
+
+.gallery-caption h3, .gallery-caption h4 {
+	margin: 0;
+}
+
+/* Responsive design tweaks */
+
+img {
+	height: auto;
+	max-width: 100%;
+}
+
+@media (max-width: 800px) {
+	.gallery-item {
+		float: none;
+		width: auto;
+	}
+}
+
+@media (max-width: 650px) {
+	blockquote, .primary, .secondary, .alignleft, .alignright {
+		float: none;
+		padding: 0;
+		width: auto;
+	}
+	
+	.primary {
+		border-right: 0;
+		border-bottom-color: rgb(185,183,195);
+		border-bottom-style: solid;
+		border-bottom-width: 5px;
+	}
+}
