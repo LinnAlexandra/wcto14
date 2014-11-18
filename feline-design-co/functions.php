@@ -36,7 +36,7 @@ add_action( 'wp_enqueue_scripts', 'my_scripts_and_styles' );
 
 // Append ellipsis and continue reading link to automatic excerpts
 function my_excerpt_more( $more ) {
-	return ' &hellip; <a href="'. get_permalink() .'">Continue reading &rarr;</a>';
+	return ' &hellip; <a href="'. get_permalink() .'">Continue reading &ldquo;'. get_the_title() .'&rdquo; &rarr;</a>';
 }
 add_filter('excerpt_more', 'my_excerpt_more');
 

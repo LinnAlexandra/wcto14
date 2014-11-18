@@ -378,10 +378,10 @@ Version: 1.0
 				</section>
 				<section>
 					<h2>wp_title() &amp; bloginfo('name')</h2>
-					<p>The title function looks best if you also add the site&rsquo;s name (the one you specify under Settings &rarr; General). This:</p>
-					<pre><code class="php">&lt;title&gt;&lt;?php bloginfo( 'name' ); wp_title(); ?&gt;&lt;/title&gt;</code></pre>
-					<p>outputs this (when viewing that same blog post):</p>
-					<pre><code class="php">Feline Design Co. &raquo; Blog post #1</code></pre>
+					<p>The title function looks best if you also add the site&rsquo;s name (the one you specify under Settings &rarr; General), and change the separator. This:</p>
+					<pre><code class="php">&lt;title&gt;&lt;?php wp_title('&amp;mdash;', true, 'right'); bloginfo( 'name' ); ?&gt;&lt;/title&gt;</code></pre>
+					<p>changes the separator to a long dash, moves it to the right-hand side, and adds the site name, outputting this (when viewing that same blog post):</p>
+					<pre><code class="php">Blog post #1 &mdash; Feline Design Co.</code></pre>
 					<p class="small"><strong>Reference:</strong> <a href="http://codex.wordpress.org/Function_Reference/bloginfo">codex.wordpress.org/Function_Reference/bloginfo</a></p>
 				</section>
 				<section>
@@ -922,10 +922,10 @@ add_action( 'wp_enqueue_scripts', 'my_scripts_and_styles' );</code></pre>
 				</section>
 				<section>
 					<h2>excerpt_more</h2>
-					<p>By default, WordPress adds [...] to the end of <code>the_excerpt()</code>. To replace this with an ellipsis character and a &ldquo;Continue reading&rdquo; link to the full post, include this code in functions.php:</p>
+					<p>By default, WordPress adds [...] to the end of <code>the_excerpt()</code>. To replace this with an ellipsis character and a &ldquo;Continue reading &ldquo;[post title]&rdquo; &rarr;&rdquo; link to the full post, include this code in functions.php:</p>
 					<pre><code class="php">// Append ellipsis and continue reading link to automatic excerpts
 function my_excerpt_more( $more ) {
-    return ' &amp;hellip; &lt;a href="'. get_permalink() .'"&gt;Continue reading &amp;rarr;&lt;/a&gt;';
+    return ' &amp;hellip; &lt;a href="'. get_permalink() .'"&gt;Continue reading &amp;ldquo;'. get_the_title() .'&amp;rdquo; &amp;rarr;&lt;/a&gt;';
 }
 add_filter('excerpt_more', 'my_excerpt_more');</code></pre>
 				</section>
